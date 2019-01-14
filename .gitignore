@@ -1,0 +1,53 @@
+# Compiled class file
+*.class
+target
+nbproject
+.settings
+**/upload
+**/dist
+.project
+.classpath
+
+# npm artifacts
+**/node_modules
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+**/*.mv.db
+**/*.trace.db
+**/data/*
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+/jetty-frmwork/nbproject/
+/jetty-incubate/target/
+/jetty-frmwork/target/
+/jetty-mvc-flux/nbproject/
+/jetty-mvc-classic/target/
+/jetty-mvc-flux/target/
+/simplest-app/target/
+/jetty-router/nbproject/
+/jetty-router/target/
+/jetty-mvc-annotate/target/
+/jetty-flux-mvc/target/
+/jetty-flux-mvc/nbproject/
+/jetty-flux-reactive/target/
+/zesty-quickstart/target/
+/zesty-startup/target/
+/zesty-app-template/target/
+/zesty-quick-template/target/

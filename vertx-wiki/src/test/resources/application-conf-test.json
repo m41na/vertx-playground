@@ -1,0 +1,7 @@
+{
+  "http.port": 8081,
+  "url": "jdbc:mysql://localhost/db_vertx_play",
+  "driver_class": "com.mysql.cj.jdbc.Driver",
+  "user": "vertx",
+  "password": "vertx"
+}

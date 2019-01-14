@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.practicaldime.works</groupId>
+	<artifactId>vertx-playground</artifactId>
+	<version>0.1</version>
+	<packaging>pom</packaging>
+
+	<name>vertx-playground</name>
+	<url>http://practicaldime.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<vertx.version>3.6.2</vertx.version>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>io.vertx</groupId>
+				<artifactId>vertx-core</artifactId>
+				<version>${vertx.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>io.vertx</groupId>
+				<artifactId>vertx-web</artifactId>
+				<version>${vertx.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>io.vertx</groupId>
+				<artifactId>vertx-web-client</artifactId>
+				<version>${vertx.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>io.vertx</groupId>
+				<artifactId>vertx-codegen</artifactId>
+				<version>${vertx.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>io.vertx</groupId>
+				<artifactId>vertx-config</artifactId>
+				<version>${vertx.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>io.vertx</groupId>
+				<artifactId>vertx-jdbc-client</artifactId>
+				<version>${vertx.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>io.vertx</groupId>
+				<artifactId>vertx-mongo-client</artifactId>
+				<version>${vertx.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>io.vertx</groupId>
+				<artifactId>vertx-web-templ-freemarker</artifactId>
+				<version>${vertx.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.github.rjeschke</groupId>
+				<artifactId>txtmark</artifactId>
+				<version>0.13</version>
+			</dependency>
+
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>1.2.3</version>
+			</dependency>
+
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>8.0.13</version>
+			</dependency>
+
+			<dependency>
+				<groupId>de.flapdoodle.embed</groupId>
+				<artifactId>de.flapdoodle.embed.mongo</artifactId>
+				<version>2.2.0</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>io.vertx</groupId>
+				<artifactId>vertx-unit</artifactId>
+				<version>${vertx.version}</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.12</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.7.0</version>
+					<configuration>
+						<source>1.8</source>
+						<target>1.8</target>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+	<modules>
+		<module>vertx-wiki</module>
+		<module>vertx-bricks</module>
+		<module>vertx-todos</module>
+	</modules>
+</project>

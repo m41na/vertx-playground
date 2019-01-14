@@ -1,0 +1,5 @@
+{
+	"mongo.port": 21017,
+	"db_name": "db_bricks",
+	"connection_string": "mongodb://localhost"
+}

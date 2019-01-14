@@ -1,0 +1,15 @@
+= Cheatsheets
+
+[[Todo]]
+== Todo
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[completed]]`@completed`|`Boolean`|-
+|[[id]]`@id`|`String`|-
+|[[title]]`@title`|`String`|-
+|===
+

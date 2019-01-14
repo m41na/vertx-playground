@@ -1,0 +1,6 @@
+{
+  "http.port" : 8082,
+  "url": "jdbc:mysql://localhost/db_vertx_play?user=vertx&password=vertx",
+  "driver_class": "com.mysql.cj.jdbc.MysqlConnectionPoolDataSource",
+  "max_pool_size": 30
+}
