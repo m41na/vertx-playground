@@ -129,5 +129,6 @@
 		<module>vertx-wiki</module>
 		<module>vertx-bricks</module>
 		<module>vertx-todos</module>
+		<module>vertx-bluprint</module>
 	</modules>
 </project>
