@@ -1,0 +1,485 @@
+Http Module
+1. Create Account
+{
+  Account: {
+    id: string! pk
+    username: string!
+    password: string!
+    authToken: string!
+    status: enum[pending, active, inactive, disabled]! default 'pending'
+    role: enum[user, admin, guest] default 'guest'
+    login_attempts: int! default 0
+    player: string! ref(player.id)
+    mfa_code: string
+    mfa_method: enum[email,text,call]! default 'email',
+    mfa_last_updated: Date[dd~/mm/yyyy]! default 'now()'
+  }
+}
+
+- POST /account
+- validate account body
+{
+  emailAddress: string!
+  username: string!
+  password: string!
+  confirmPassword: string!
+}
+- onInvalidFields
+  - checks
+    * email is already registered
+    * username is already in use
+    * password is does not meet password criteria
+    * confirmPassword does not match password
+  - send error response with invalid fields
+    {
+      result: {
+        type: invalid_input
+        data: {
+          email: ''
+          username: ''
+          password: ''
+          confirmPassword: ''
+        }
+      }
+    }
+  - send audit message with error data
+- OnValidated
+  - replace password with hashed equivalent and delete confirmPassword
+  - send registration message with input fields
+  - onRegistrationSuccess
+    - send success response
+      {
+        type: registration_success
+        data: {
+          id: string!
+          status: 'pending'
+          role: 'guest',
+          player: string!
+        }
+      }
+  - send audit message with input fields
+  - onRegistrationError
+    - send error response
+      {
+        type: registration_error
+        data: {
+          cause: ''
+        }
+      }
+    - send audit message - registration_error
+    {
+      type: registration_error
+      data: {
+        emailAddress: string!
+        username: string!
+        password: string!
+      },
+      error: ''
+    }
+
+2. Update Profile
+{
+  Profile: {
+    id: string! pk
+    playAlias: string! default(account.username)
+    emailAddress: string!
+    firstName: string!
+    lastName: string~
+    phoneNum: string~
+    location: Location!
+    birthDay: Date[dd~/mm/yyyy]
+    dateCreated: Date[dd/mm/yyyy 'at' hh:mm:ss]!
+  }
+}
+
+{
+  Location: {
+    id: string! pk
+    city: string!
+    state: string!
+    country: string! ref(tbl_country_codes) default 'US'
+  }
+}
+
+- PUT /profile/{profile_id}
+- validate profile body
+  {
+    id: string!
+    playAlias: string
+    firstName: string!
+    lastName: string~
+    city: string!
+    state: string!
+    country: string!
+    birthDay: Date!
+    lastUpdated: Date!
+  }
+
+- onInvalidFields
+  - check
+    * id field is missing
+    * firstName is missing
+    * city is missing
+    * state is missing
+    * state is invalid (for US, check that the state is a valid code)
+    * country is missing (check that country is a valid code)
+  - send audit message with error data
+- OnValidated
+  - send update_profile message with input fields
+  - onUpdateProfileSuccess
+    - send success response
+      {
+        type: updated_profile_success
+        data: {
+          id: string!
+          lastUpdated: Date!
+        }
+      }
+  - send audit message with input fields
+  - onUpdateProfileError
+    - send error response
+      {
+        type: updated_profile_error
+        data: {
+          cause: ''
+        }
+      }
+    - send audit message - update_profile_error
+    {
+      type: update_profile_error
+      data: {
+        id: string!
+        playAlias: string
+        firstName: string!
+        lastName: string~
+        city: string!
+        state: string!
+        country: string!
+        birthDay: Date!
+        lastUpdated: Date!
+      },
+      error: ''
+    }
+
+3. Change Account Password
+
+- PUT /account/{player_id}/password
+- validate credentials body
+{
+  username: string!
+  currentPassword: string!
+  newPassword: string!
+  confirmNewPassword: string!
+}
+- onInvalidFields
+  - checks
+    * username does not match player_id
+    * currentPassword does not match existing password
+    * newPassword is does not meet password criteria
+    * confirmNewPassword does not match newPassword
+  - send error response with invalid fields
+    {
+      result: {
+        type: invalid_input
+        data: {
+          username: ''
+          currentPassword: ''
+          newPassword: ''
+          confirmNewPassword: ''
+        }
+      }
+    }
+  - send audit message with error data
+- OnValidated
+  - replace newPassword with hashed equivalent and delete confirmPassword
+  - send change_password_success message
+  - onSuccess
+    - send success response
+      {
+        type: change_password_success
+        data: {
+          profile_id: string!
+          username: 'pending'
+        }
+      }
+  - send audit message - change_password_success
+  - onError
+    - send error response
+      {
+        type: change_password_error
+        data: {
+          cause: ''
+        }
+      }
+    - send audit message - change_password_error
+    {
+      type: change_password_error
+      data: {
+        profile_id: string!
+        username: string!
+      },
+      error: ''
+    }
+
+4. Reset Account Password
+
+- DELETE /account/{player_id}/password
+- validate credentials body
+{
+  username: string!
+}
+- onInvalidFields
+  - checks
+    * username does not match player_id
+  - send error response with invalid fields
+    {
+      result: {
+        type: invalid_input
+        data: {
+          username: ''
+        }
+      }
+    }
+  - send audit message with error data
+- OnValidated
+  - send reset_password message
+  - onSuccess
+    - send success response
+      {
+        type: reset_password_success
+        data: {
+          profile_id: string!
+          username: 'pending'
+        }
+      }
+  - send audit message - reset_password_success
+  - onError
+    - send error response
+      {
+        type: reset_password_error
+        data: {
+          cause: ''
+        }
+      }
+    - send audit message - reset_password_error
+    {
+      type: reset_password_error
+      data: {
+        profile_id: string!
+        username: string!
+      },
+      error: ''
+    }
+
+5. Recover Username
+
+- GET /account/{email}/username
+- validate email address
+- onInvalidFields
+  - checks
+    * email has no associated account
+    * email format is invalid
+  - send error response with invalid fields
+    {
+      result: {
+        type: invalid_input
+        data: {
+          email: ''
+        }
+      }
+    }
+  - send audit message with error data
+- OnValidated
+  - send recover_username message
+  - onSuccess
+    - send success response
+      {
+        type: recover_username_success
+        data: {
+          email: string!
+        }
+      }
+  - send audit message - recover_username_success
+  - onError
+    - send error response
+      {
+        type: recover_username_error
+        data: {
+          cause: ''
+        }
+      }
+    - send audit message - recover_username_error
+    {
+      type: recover_username_error
+      data: {
+        email: string!
+      },
+      error: ''
+    }
+
+6. SignIn
+
+- POST /login
+- validate credentials body
+{
+  username: string!
+  password: string!
+}
+- onInvalidFields
+  - checks
+    * username does not exist
+    * password does not match account password
+    * check that max login attempts is not reached
+    * check that account status is not disabled or pending or inactive
+  - send error response with invalid fields
+    {
+      result: {
+        type: invalid_input
+        data: {
+          username: ''
+        }
+      }
+    }
+  - send audit message with error data
+    {
+      type: account_login_error
+      data: {
+        cause: ''
+      }
+    }
+- OnValidated
+  - delete password from input
+  - send account_login message
+  - onSuccess
+    - send success response
+      {
+        type: account_login_success
+        data: {
+          profile_id: string!
+          username: 'pending'
+          firstName: string
+          lastName: string,
+        }
+      }
+  - send audit message - account_login_success
+  - onError
+    - send error response
+      {
+        type: account_login_error
+        data: {
+          cause: ''
+        }
+      }
+    - send audit message - account_login_error
+    {
+      type: account_login_error
+      data: {
+        profile_id: string!
+        username: string!
+      },
+      error: ''
+    }
+
+6. SignOut
+
+- POST /logout
+- validate credentials body
+{
+  username: string!
+}
+- onInvalidFields
+  - checks
+    * username does not exist
+  - send error response with invalid fields
+    {
+      result: {
+        type: invalid_input
+        data: {
+          username: ''
+        }
+      }
+    }
+  - send audit message with error data
+    {
+      type: account_logout_error
+      data: {
+        cause: ''
+      }
+    }
+- OnValidated
+  - send account_logout message
+  - onSuccess
+    - send success response
+      {
+        type: account_login_success
+        data: {
+          profile_id: string!
+          username: 'pending'
+          firstName: string
+          lastName: string,
+        }
+      }
+  - send audit message - account_login_success
+  - onError
+    - send error response
+      {
+        type: account_logout_error
+        data: {
+          cause: ''
+        }
+      }
+    - send audit message - account_logout_error
+    {
+      type: account_logout_error
+      data: {
+        username: string!
+      },
+      error: ''
+    }
+
+6. Restore Inactive Account
+
+- GET /account/{email}/restore
+- validate email address
+- onInvalidFields
+  - checks
+    * email has no associated account
+    * email format is invalid
+    * account status is either inactive
+  - send error response with invalid fields
+    {
+      result: {
+        type: invalid_input
+        data: {
+          email: ''
+        }
+      }
+    }
+  - send audit message with error data
+- OnValidated
+  - send recover_username message
+  - onSuccess
+    - send success response
+      {
+        type: recover_username_success
+        data: {
+          email: string!
+        }
+      }
+  - send audit message - recover_username_success
+  - onError
+    - send error response
+      {
+        type: recover_username_error
+        data: {
+          cause: ''
+        }
+      }
+    - send audit message - recover_username_error
+    {
+      type: recover_username_error
+      data: {
+        email: string!
+      },
+      error: ''
+    }

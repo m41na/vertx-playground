@@ -1,0 +1,24 @@
+{
+  "name": "es4x-play",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "@vertx/core": "^3.6.2",
+    "@vertx/web": "^3.6.2",
+    "es4x-cli": "^0.1.1"
+  },
+  "devDependencies": {
+    "@vertx/unit": "^3.6.2",
+    "es4x-cli": "^0.1.1"
+  },
+  "scripts": {
+    "test": "es4x exec test",
+    "postinstall": "es4x postinstall",
+    "start": "es4x exec run",
+    "package": "es4x package"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
