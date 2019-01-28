@@ -38,7 +38,7 @@ INSERT INTO db_vertx_play.tbl_que_decor (decor_name,use_choices,use_clues,use_co
 ,('survey',1,0,1,0,0,-1)
 ,('classmode',1,0,1,0,0,-1)
 ,('countdown',1,0,1,0,0,-1)
-,('get_or_done',1,0,1,0,0,-1)
+,('get_r_done',1,0,1,0,0,-1)
 ,('close_not_over',1,0,1,0,0,-1)
 ,('countdown_n_clue',1,0,1,0,0,-1)
 ;

@@ -32,15 +32,15 @@ public class ActionHelper {
         };
     }
 
-    static <T> Handler<AsyncResult<T>> ok(RoutingContext rc) {
+    public static <T> Handler<AsyncResult<T>> ok(RoutingContext rc) {
         return writeJsonResponse(rc, 200);
     }
 
-    static <T> Handler<AsyncResult<T>> created(RoutingContext rc) {
+    public static <T> Handler<AsyncResult<T>> created(RoutingContext rc) {
         return writeJsonResponse(rc, 201);
     }
 
-    static Handler<AsyncResult<Void>> noContent(RoutingContext rc) {
+    public static Handler<AsyncResult<Void>> noContent(RoutingContext rc) {
         return ar -> {
             if (ar.failed()) {
                 if (ar.cause() instanceof NoSuchElementException) {

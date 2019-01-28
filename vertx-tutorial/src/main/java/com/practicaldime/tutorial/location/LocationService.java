@@ -8,17 +8,17 @@ import io.vertx.core.Future;
 
 public interface LocationService {
 
-	Future<Boolean> initData(); // init the data (or table)
+	Future<Void> initData(); // init the data (or table)
 
-	Future<Location> insert(Location todo);
+	Future<Location> insert(Location location);
 
 	Future<List<Location>> getAll();
 
 	Future<Location> getCertain(String id);
 
-	Future<Location> update(String id, Location newLoc);
+	Future<Void> update(String id, Location location);
 
-	Future<Boolean> delete(String id);
+	Future<Void> delete(String id);
 
 	Future<Boolean> deleteAll();
 }

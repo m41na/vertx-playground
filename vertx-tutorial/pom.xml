@@ -15,7 +15,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<vertx.version>3.6.2</vertx.version>
 		<vmp.version>1.0.18</vmp.version>
-		<vertx.verticle>com.practicaldime.tutorial.FourthVerticle</vertx.verticle>
+		<vertx.verticle>com.practicaldime.tutorial.location.LocationVerticle</vertx.verticle>
 	</properties>
 
 	<dependencies>

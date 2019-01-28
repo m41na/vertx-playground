@@ -1,31 +1,21 @@
 package com.practicaldime.tutorial.location;
 
-import static com.practicaldime.tutorial.ActionHelper.*;
+import static com.practicaldime.tutorial.ActionHelper.created;
+import static com.practicaldime.tutorial.ActionHelper.noContent;
+import static com.practicaldime.tutorial.ActionHelper.ok;
 
 import java.util.HashSet;
-import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import com.practicaldime.tutorial.entity.Location;
 
+import io.vertx.config.ConfigRetriever;
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
-import io.vertx.core.Handler;
 import io.vertx.core.http.HttpMethod;
-import io.vertx.core.http.HttpServerResponse;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
-import io.vertx.ext.jdbc.JDBCClient;
-import io.vertx.ext.sql.SQLConnection;
-import io.vertx.ext.sql.SQLOptions;
-import io.vertx.ext.sql.UpdateResult;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -36,7 +26,6 @@ public class LocationVerticle extends AbstractVerticle {
 
 	private final Logger logger = LoggerFactory.getLogger(LocationVerticle.class);
 	
-	private static final String HOST = "0.0.0.0";
 	private static final int PORT = 8082;
 	
 	private LocationService service;
@@ -64,6 +53,13 @@ public class LocationVerticle extends AbstractVerticle {
 				.allowedHeaders(allowHeaders)
 				.allowedMethods(allowMethods));
 		
+		//bind root context handler
+		router.route("/").handler(rc -> {
+			rc.response()
+			.putHeader("Content-Type", "text/html")
+			.end("<h1>Hello Http Vertx!</h1>");
+		});
+		
 		//configure static resources
 		router.route("/assets/*").handler(StaticHandler.create("assets"));
 		
@@ -74,16 +70,36 @@ public class LocationVerticle extends AbstractVerticle {
 		router.delete(Constants.API_DELETE_LOCATION).handler(this::deleteOne);
 		router.put(Constants.API_UPDATE_LOCATION).handler(this::updateOne);
 		
-		initData();
+		//fire up server and use router
+		ConfigRetriever retriever = ConfigRetriever.create(vertx);
+		ConfigRetriever.getConfigAsFuture(retriever)
+			.compose(config -> {
+				//create jdbc client
+				service = new JdbcLocationService(vertx, config);
+				return initData().compose(v -> createHttpServer(config, router));
+			}).setHandler(fut);
 	}
 	
-	private void initData() {
-		service.initData().setHandler(res -> {
-		      if (res.failed()) {
-		        logger.error("Persistence service is not running!");
-		        res.cause().printStackTrace();
-		      }
-		    });
+	private Future<Void> createHttpServer(JsonObject config, Router router){
+		Future<Void> future = Future.future();
+		vertx.createHttpServer()
+		.requestHandler(router)
+		.listen(
+			config.getInteger("http.port", PORT), 
+			res -> future.handle(res.mapEmpty()));
+		return future;
+	}
+	
+	private Future<Void> initData() {
+		return service.initData().setHandler(res -> {
+	      if (res.failed()) {
+	        logger.error("Persistence service is not running!");
+	        res.cause().printStackTrace();
+	      }
+	      else{
+	    	  logger.info("Persistence service initialized");
+	      }
+	    });
 	}
 	
 	public void getAll(RoutingContext ctx) {
