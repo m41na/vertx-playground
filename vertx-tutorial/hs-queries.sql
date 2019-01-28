@@ -28,9 +28,9 @@ CREATE TABLE IF NOT EXISTS `tbl_account` (
   `acc_status` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
   `acc_role` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'guest',
   `phone_num` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `rec_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `mfa_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `mfa_method` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'email',
+  `rec_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`fk_player_id`,`username`),
   UNIQUE KEY `tbl_acc_username_UN` (`username`),
   CONSTRAINT `tbl_account_tbl_player_FK` FOREIGN KEY (`fk_player_id`) REFERENCES `tbl_player` (`player_id`)

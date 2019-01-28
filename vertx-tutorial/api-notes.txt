@@ -1,0 +1,6 @@
+GET 	/api/location 		=> get all locations in tbl_location
+GET 	/api/location/:id	=> get location with the given :id
+POST	/api/location		=> create a new location
+PUT		/api/location/:id	=> update a location's info
+DELETE	/api/location/:id	=> delete a location
+
